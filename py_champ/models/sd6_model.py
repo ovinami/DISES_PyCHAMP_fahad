@@ -5,6 +5,7 @@ import mesa
 import numpy as np
 import pandas as pd
 from tqdm import tqdm
+from mesa import Model #new addition
 
 from ..components.aquifer import Aquifer
 from ..components.behavior import Behavior
@@ -16,7 +17,7 @@ from ..utility.util import BaseSchedulerByTypeFiltered, Indicator, TimeRecorder
 
 
 # % MESA
-class SD6Model(mesa.Model):
+class SD6Model(Model): #changed from mesa.Model to Model
     """
     A Mesa model representing the SD6 simulation for agricultural and environmental systems.
 
@@ -129,7 +130,13 @@ class SD6Model(mesa.Model):
         gurobi_dict=None,
         **kwargs,
     ):
-        # Prepare the model
+        super().__init__() #new addition
+	# Ensure self.random is initialized
+        import random #this and next two lines new addition
+        if not hasattr(self, "random"):
+            self.random = random.Random(seed)  # Ensure self.random exists    
+    
+	# Prepare the model
         if gurobi_dict is None:
             gurobi_dict = {"LogToConsole": 0, "NonConvex": 2, "Presolve": -1}
         if components is None:
